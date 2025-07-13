@@ -1,0 +1,54 @@
+
+<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>IND-RDX Competition</title><style>
+body{font-family:Arial,sans-serif;background:linear-gradient(to right,#00b09b,#96c93d);color:#fff;text-align:center;padding:20px;}
+.container{display:flex;justify-content:center;gap:20px;}
+.card{background:rgba(0,0,0,0.3);padding:20px;border-radius:10px;width:300px;}
+input,button{width:100%;padding:10px;margin:10px 0;border:none;border-radius:5px;}
+button{background:#fff;color:#333;cursor:pointer;}
+button:hover{background:#eee;}
+</style></head><body><h1>IND-RDX Competition</h1>
+<div class="container">
+  <div class="card">
+    <h2>Competition</h2>
+    <p>Joining Fee: 10 Coins</p>
+    <button onclick="joinCompetition()">Join Now</button>
+  </div>
+  <div class="card">
+    <h2>Signup</h2>
+    <input id="signupPhone" placeholder="Phone Number">
+    <button onclick="signup()">Signup</button>
+    <h2>Login</h2>
+    <input id="loginPhone" placeholder="Phone Number">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+</div>
+<script>
+function signup(){
+  fetch("http://localhost:5000/signup", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ phone: document.getElementById("signupPhone").value })
+  }).then(res=>res.json()).then(d=>alert(d.message));
+}
+function login(){
+  fetch("http://localhost:5000/login", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      phone: document.getElementById("loginPhone").value,
+      password: document.getElementById("loginPassword").value
+    })
+  }).then(res=>res.json()).then(d=>{
+    if(d.user){ localStorage.setItem("phone", d.user.phone); alert("Login Successful"); }
+    else alert(d.message);
+  });
+}
+function joinCompetition(){
+  const phone = localStorage.getItem("phone");
+  if(!phone){ alert("Please login first"); return; }
+  fetch("http://localhost:5000/join", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ phone })
+  }).then(res=>res.json()).then(d=>alert(d.message));
+}
+</script>
+</body></html>
